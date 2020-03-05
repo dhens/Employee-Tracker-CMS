@@ -29,3 +29,6 @@ create table department(
     primary key (id),
     name varchar(30)
 );
+
+insert into employee (first_name, last_name, role_id, manager_id)
+values ('Bill', 'Billiamson', 3, 1);

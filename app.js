@@ -85,6 +85,14 @@ const startApp = () => {
 }
 
 const viewAllEmployees = () => {
+    const query = connection.query(
+        'select * from employee',
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            startApp();
+        }
+    )
 
 }
 const viewAllEmployeesByDepartment = () => {
