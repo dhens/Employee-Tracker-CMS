@@ -96,29 +96,99 @@ const viewAllEmployees = () => {
 
 }
 const viewAllEmployeesByDepartment = () => {
+    const query = connection.query(
+        // 'select employee from departments',
+        function(err, res) {
+            if (err) throw err;
+            console.log(res);
+        }
+    )
 
 }
 const viewAllEmployeesByManager = () => {
+    const query = connection.query(
+        // 'select employees that have manager x'
+        function(err, res) {
+            if(err) throw err;
+            console.log(res);
+        }
+    )
 
 }
 const addEmployee = () => {
-
+    const query = connection.query(
+        //inquirer prompt to get all required info for new employee
+        // 'insert into employee SET ??,
+        // {
+        //      firstname
+        //      lastname
+        //      title
+        //      role (id)
+        //      manager (id)
+        //}
+        function(err, res) {
+            if (err) throw err;
+            console.log(res);
+        }
+    )
 }
 const deleteEmployee = () => {
-
+    const query = connection.query(
+        // inquirer prompt of all saved users in db
+        // delete from employee where id = employee id
+        function (err, res) {
+            if (err) throw err;
+            console.log(`Removed user: ${res.affectedRows}`);
+        }
+    )
 }
 const updateEmployeeRole = () => {
-
+    const query = connection.query(
+        // inquirer prompt of all saved users in db
+        // update employee set role = 5 where 
+        function (err, res) {
+            if (err) throw err;
+            console.log(`Updated Employee Role!`);
+        }
+    )
 }
 const updateEmployeeManager = () => {
-
+    const query = connection.query(
+        // inquirer promt of all saved employees in db
+        // update employee set manager_id =
+        function (err, res) {
+            if (err) throw err;
+            console.log(`Updated Employee's Manager`);
+        }
+    )
 }
 const viewAllRoles = () => {
-
+    const query = connection.query(
+        'select * from role',
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+        }
+    )
 }
 const addRole = () => {
-
+    const query = connection.query(
+        // inquirer prompt to ask user desired title and salary vals
+        // 'insert into role (title, salary, department_id)
+        // values('Janitor', 35000, 2)
+        function (err, res) {
+            if (err) throw err;
+            console.log(`Added role ${responses.title} with salary of ${responses.salary}`);
+        }
+    )
 }
 const removeRole = () => {
-
+    const query = connection.query(
+        // inquirer prompt of all saved roles in db
+        'select * from role',
+        function (err, res) {
+            if (err) throw err;
+            console.log(res);
+        }
+    )
 }
