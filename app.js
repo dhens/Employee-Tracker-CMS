@@ -66,20 +66,51 @@ const startApp = () => {
                     break;
                     
                 case 'View All Roles':
-                    addEmployee();
+                    viewAllRoles();
                     break;
 
                 case 'Add Role':
-                    updateEmployeeRole();
+                    addRole();
                     break;
 
                 case 'Remove Role':
-                    updateEmployeeManager();
+                    removeRole();
                     break;
 
                 case 'Exit':
                     connection.end();
                     break;                    
             }
-        })
+        });
+}
+
+const viewAllEmployees = () => {
+
+}
+const viewAllEmployeesByDepartment = () => {
+
+}
+const viewAllEmployeesByManager = () => {
+
+}
+const addEmployee = () => {
+
+}
+const deleteEmployee = () => {
+
+}
+const updateEmployeeRole = () => {
+
+}
+const updateEmployeeManager = () => {
+
+}
+const viewAllRoles = () => {
+
+}
+const addRole = () => {
+
+}
+const removeRole = () => {
+
 }
