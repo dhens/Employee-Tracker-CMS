@@ -86,7 +86,7 @@ const startApp = () => {
 
 const viewAllEmployees = () => {
     const query = connection.query(
-        'select * from employee',
+        'select * from employees',
         function (err, res) {
             if (err) throw err;
             console.table(res);
