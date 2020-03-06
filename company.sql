@@ -7,7 +7,7 @@ create database companyDB;
 
 use companyDB;
 
-create table employee(
+create table employees(
 	id int not null auto_increment,
     primary key (id),
     first_name varchar(30),
@@ -16,7 +16,7 @@ create table employee(
     manager_id int null
 );
 
-create table role(
+create table roles(
 	id int not null auto_increment,
     primary key (id),
     title varchar(30),
@@ -24,11 +24,8 @@ create table role(
     department_id int
 );
 
-create table department(
+create table departments(
 	id int not null auto_increment,
     primary key (id),
-    name varchar(30)
+    name varchar(50)
 );
-
-insert into employee (first_name, last_name, role_id, manager_id)
-values ('Bill', 'Billiamson', 3, 1);
