@@ -93,8 +93,8 @@ const viewAllEmployees = () => {
             startApp();
         }
     )
-
 }
+
 const viewAllEmployeesByDepartment = () => {
     const query = connection.query(
         // 'select employee from departments',
@@ -105,6 +105,7 @@ const viewAllEmployeesByDepartment = () => {
     )
 
 }
+
 const viewAllEmployeesByManager = () => {
     const query = connection.query(
         // 'select employees that have manager x'
@@ -115,7 +116,16 @@ const viewAllEmployeesByManager = () => {
     )
 
 }
+
 const addEmployee = () => {
+    let currentRoles = [];
+    connection.query(
+        'select title from roles',
+        function (err, res) {
+            if (err) throw err;
+            res.forEach(title => currentRoles.push(title.title))
+        }
+    )
     inquirer.prompt([
         {
             type: 'input',
@@ -128,13 +138,14 @@ const addEmployee = () => {
             name: 'lastName'
         },
         {
-            type: 'input',
-            message: 'Enter employee\'s role ID (required):',
+            type: 'list',
+            message: 'What is the employees role?',
+            choices: currentRoles,
             name: 'roleID'
         },
         {
             type: 'input',
-            message: 'Enter employee\'s manager ID (if applicable):',
+            message: 'Who is this employee\'s manager?',
             name: 'managerID',
         }
     ])
@@ -151,21 +162,22 @@ const addEmployee = () => {
         (err, res) => {
             if (err) throw err;
         }
-        console.log(`Added ${responses.firstName} ${responses.lastName} | Role ID: ${responses.roleID} Manager ID: ${responses.managerID}!`);
-        
+        console.log(`Added ${responses.firstName} ${responses.lastName} | Role: ${responses.roleID} Manager ID: ${responses.managerID}!`);
         startApp();
     })
 }
+
 const deleteEmployee = () => {
     const query = connection.query(
         // inquirer prompt of all saved users in db
         // delete from employee where id = employee id
-        function (err, res) {
+        (err, res) => {
             if (err) throw err;
             console.log(`Removed user: ${res.affectedRows}`);
         }
     )
 }
+
 const updateEmployeeRole = () => {
     const query = connection.query(
         // inquirer prompt of all saved users in db
@@ -176,6 +188,7 @@ const updateEmployeeRole = () => {
         }
     )
 }
+
 const updateEmployeeManager = () => {
     const query = connection.query(
         // inquirer promt of all saved employees in db
@@ -186,6 +199,7 @@ const updateEmployeeManager = () => {
         }
     )
 }
+
 const viewAllRoles = () => {
     const query = connection.query(
         'select * from role',
@@ -195,6 +209,7 @@ const viewAllRoles = () => {
         }
     )
 }
+
 const addRole = () => {
     const query = connection.query(
         // inquirer prompt to ask user desired title and salary vals
@@ -206,6 +221,7 @@ const addRole = () => {
         }
     )
 }
+
 const removeRole = () => {
     const query = connection.query(
         // inquirer prompt of all saved roles in db
