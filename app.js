@@ -96,7 +96,10 @@ const startApp = () => {
 
 const viewAllEmployees = () => {
     const query = connection.query(
-        'select * from employees',
+        `SELECT first_name, last_name, title, salary
+        FROM employees 
+        INNER JOIN roles
+        ON employees.role_id = roles.id`,
         function (err, res) {
             if (err) throw err;
             console.table(res);
@@ -259,6 +262,15 @@ const addRole = () => {
 }
 
 const removeRole = () => {
+    // Creates a list of roles to be used for inquirer questions
+    const currentRoles = [];
+    connection.query(
+        'select title from roles',
+        function (err, res) {
+            if (err) throw err;
+            res.forEach(title => currentRoles.push(title.title))
+        }
+    )
     const query = connection.query(
         // inquirer prompt of all saved roles in db
         'select * from roles',
@@ -287,7 +299,7 @@ const addDepartment = () => {
         (err, res) => {
             if (err) throw err;
         }
-        console.log(`\nAdded department: ${responses.title}\n`)
+        console.log(`\nAdded department: ${responses.title}\n`);
         startApp();    
     })
 }
