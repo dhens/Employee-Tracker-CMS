@@ -116,21 +116,45 @@ const viewAllEmployeesByManager = () => {
 
 }
 const addEmployee = () => {
-    const query = connection.query(
-        //inquirer prompt to get all required info for new employee
-        // 'insert into employee SET ??,
-        // {
-        //      firstname
-        //      lastname
-        //      title
-        //      role (id)
-        //      manager (id)
-        //}
-        function(err, res) {
-            if (err) throw err;
-            console.log(res);
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Enter employee\'s first name (required):',
+            name: 'firstName'
+        },
+        {
+            type: 'input',
+            message: 'Enter employee\'s last name (required):',
+            name: 'lastName'
+        },
+        {
+            type: 'input',
+            message: 'Enter employee\'s role ID (required):',
+            name: 'roleID'
+        },
+        {
+            type: 'input',
+            message: 'Enter employee\'s manager ID (if applicable):',
+            name: 'managerID',
         }
-    )
+    ])
+    .then( (responses) => {
+        connection.query(
+            "INSERT INTO employees SET ?",
+            {
+              first_name: responses.firstName,
+              last_name: responses.lastName,
+              role_id: responses.roleID,
+              manager_id: responses.managerID
+            }
+        ), 
+        (err, res) => {
+            if (err) throw err;
+        }
+        console.log(`Added ${responses.firstName} ${responses.lastName} | Role ID: ${responses.roleID} Manager ID: ${responses.managerID}!`);
+        
+        startApp();
+    })
 }
 const deleteEmployee = () => {
     const query = connection.query(
