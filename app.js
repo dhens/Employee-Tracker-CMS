@@ -20,7 +20,7 @@ const startApp = () => {
         .prompt({
             name: 'action',
             type: 'list',
-            message: 'What would you like to do? (Use arrow keys)',
+            message: 'What would you like to do?',
             choices: [
                 'View All Employees',
                 'View All Employees by Department',
@@ -32,6 +32,8 @@ const startApp = () => {
                 'View All Roles',
                 'Add Role',
                 'Remove Role',
+                'Add Department',
+                'View All Departments',
                 'Exit'
             ]
         })
@@ -77,6 +79,14 @@ const startApp = () => {
                     removeRole();
                     break;
 
+                case 'Add Department':
+                    addDepartment();
+                    break;
+
+                case 'View All Departments':
+                    viewAllDepartments();
+                    break;
+
                 case 'Exit':
                     connection.end();
                     break;                    
@@ -118,14 +128,17 @@ const viewAllEmployeesByManager = () => {
 }
 
 const addEmployee = () => {
-    let currentRoles = [];
-    connection.query(
-        'select title from roles',
-        function (err, res) {
-            if (err) throw err;
-            res.forEach(title => currentRoles.push(title.title))
-        }
-    )
+    // Creates a list of roles to be used for inquirer questions
+    // Can't figure out how to save the index value of each role
+    // To be used as a role id for the user
+    // const currentRoles = [];
+    // connection.query(
+    //     'select title from roles',
+    //     function (err, res) {
+    //         if (err) throw err;
+    //         res.forEach(title => currentRoles.push(title.title))
+    //     }
+    // )
     inquirer.prompt([
         {
             type: 'input',
@@ -138,9 +151,8 @@ const addEmployee = () => {
             name: 'lastName'
         },
         {
-            type: 'list',
-            message: 'What is the employees role?',
-            choices: currentRoles,
+            type: 'input',
+            message: 'What is the employees role ID?',
             name: 'roleID'
         },
         {
@@ -162,8 +174,8 @@ const addEmployee = () => {
         (err, res) => {
             if (err) throw err;
         }
-        console.log(`Added ${responses.firstName} ${responses.lastName} | Role: ${responses.roleID} Manager ID: ${responses.managerID}!`);
-        startApp();
+        console.log(`\nAdded ${responses.firstName} ${responses.lastName} || Role: ${responses.roleID} || Manager ID: ${responses.managerID}\n`);
+        startApp();    
     })
 }
 
@@ -201,34 +213,92 @@ const updateEmployeeManager = () => {
 }
 
 const viewAllRoles = () => {
-    const query = connection.query(
-        'select * from role',
-        function (err, res) {
+    connection.query(
+        'select * from roles',
+        (err, res) => {
             if (err) throw err;
             console.table(res);
+            startApp();
         }
     )
 }
 
 const addRole = () => {
-    const query = connection.query(
-        // inquirer prompt to ask user desired title and salary vals
-        // 'insert into role (title, salary, department_id)
-        // values('Janitor', 35000, 2)
-        function (err, res) {
-            if (err) throw err;
-            console.log(`Added role ${responses.title} with salary of ${responses.salary}`);
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Enter the title of the new role:',
+            name: 'title'
+        },
+        {
+            type: 'input',
+            message: 'Enter the salary value (50000) for this role:',
+            name: 'salary'
+        },
+        {
+            type: 'input',
+            message: 'Enter the department ID for this role:',
+            name: 'department_id'
         }
-    )
+    ])
+    .then ((responses) => {
+        connection.query(
+            'insert into roles set ?',
+            {
+                title: responses.title,
+                salary: responses.salary,
+                department_id: responses.department_id
+            }
+        ),
+        (err, res) => {
+            if (err) throw err;
+        }
+        console.log(`Added ${responses.newRole} role with salary of ${responses.salaryVal} in department ${responses.deptID}`)
+        startApp();
+    })
 }
 
 const removeRole = () => {
     const query = connection.query(
         // inquirer prompt of all saved roles in db
-        'select * from role',
+        'select * from roles',
         function (err, res) {
             if (err) throw err;
             console.log(res);
+        }
+    )
+}
+
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'Enter the name of the new department:',
+            name: 'title'
+        }
+    ])
+    .then ((responses) => {
+        connection.query(
+            'insert into departments set ?',
+            {
+                name: responses.title
+            }
+        ),
+        (err, res) => {
+            if (err) throw err;
+        }
+        console.log(`\nAdded department: ${responses.title}\n`)
+        startApp();    
+    })
+}
+
+const viewAllDepartments = () => {
+    connection.query(
+        'select * from departments',
+        (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            startApp();
         }
     )
 }
