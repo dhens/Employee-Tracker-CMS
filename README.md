@@ -2,7 +2,7 @@
 
 A command line interface Node application that allows a user to create, view, and delete company departents, employees, and employee roles, each with their own set of information such as job title salary, and more.
 
-This repo page: https://github.com/dhens/Employee-Tracker-CM
+This repo page: https://github.com/dhens/Employee-Tracker-CMS
 
 ![schedulePage](https://i.imgur.com/uqm95Y3.png)
 
