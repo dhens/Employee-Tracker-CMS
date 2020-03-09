@@ -4,7 +4,7 @@ A command line interface Node application that allows a user to create, view, an
 
 This repo page: https://github.com/dhens/Employee-Tracker-CMS
 
-![schedulePage](https://i.imgur.com/uqm95Y3.png)
+![cliAPP](URLHERE)
 
 ## This repo contains:
 * This README
