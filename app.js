@@ -114,6 +114,7 @@ const viewAllEmployeesByDepartment = () => {
         function(err, res) {
             if (err) throw err;
             console.log(res);
+            startApp();
         }
     )
 
@@ -134,14 +135,14 @@ const addEmployee = () => {
     // Creates a list of roles to be used for inquirer questions
     // Can't figure out how to save the index value of each role
     // To be used as a role id for the user
-    // const currentRoles = [];
-    // connection.query(
-    //     'select title from roles',
-    //     function (err, res) {
-    //         if (err) throw err;
-    //         res.forEach(title => currentRoles.push(title.title))
-    //     }
-    // )
+    const currentRoles = [];
+    connection.query(
+        'select title from roles',
+        function (err, res) {
+            if (err) throw err;
+            res.forEach(title => currentRoles.push(title.title))
+        }
+    )
     inquirer.prompt([
         {
             type: 'input',
@@ -154,8 +155,9 @@ const addEmployee = () => {
             name: 'lastName'
         },
         {
-            type: 'input',
+            type: 'list',
             message: 'What is the employees role ID?',
+            choices: currentRoles,
             name: 'roleID'
         },
         {
@@ -183,14 +185,38 @@ const addEmployee = () => {
 }
 
 const deleteEmployee = () => {
-    const query = connection.query(
-        // inquirer prompt of all saved users in db
-        // delete from employee where id = employee id
+    // Creates a list of employees to be used for inquirer questions
+    // To be used as an employee id for the user
+    let allEmployees = [];
+    connection.query(
+        'select first_name from employees',
         (err, res) => {
             if (err) throw err;
-            console.log(`Removed user: ${res.affectedRows}`);
+            res.forEach(employee => allEmployees.push(employee.first_name))
+            console.log(allEmployees);
         }
-    )
+    );
+    inquirer.prompt([
+        {
+            type: 'list',
+            message: 'Select employee to delete:',
+            choices: allEmployees,
+            name: 'employeeToDelete'
+        }
+    ])
+    .then( (answers) => {
+        const rowID = employees.indexOf(answers.employeeToDelete);
+        connection.query(
+            // inquirer prompt of all saved users in db
+            'delete from employee where id = ?', [rowID],
+            (err, res) => {
+                if (err) throw err;
+                console.log(`Removed user: ${res.affectedRows}`);
+                startApp();
+            }
+        )
+    
+    })
 }
 
 const updateEmployeeRole = () => {
@@ -200,6 +226,7 @@ const updateEmployeeRole = () => {
         function (err, res) {
             if (err) throw err;
             console.log(`Updated Employee Role!`);
+            startApp();
         }
     )
 }
@@ -211,6 +238,7 @@ const updateEmployeeManager = () => {
         function (err, res) {
             if (err) throw err;
             console.log(`Updated Employee's Manager`);
+            startApp();
         }
     )
 }
@@ -277,6 +305,7 @@ const removeRole = () => {
         function (err, res) {
             if (err) throw err;
             console.log(res);
+            startApp();
         }
     )
 }
