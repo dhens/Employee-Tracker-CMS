@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
 });
 
 connection.connect(function(err) {
-    if (err) throw err;
+    if (err) console.log(err);
     console.log('Connected as id ' + connection.threadId + '\n');
     startApp();
 })
@@ -22,79 +22,47 @@ const startApp = () => {
             type: 'list',
             message: 'What would you like to do?',
             choices: [
-                'View All Employees',
-                'View All Employees by Department',
-                'View All Employees by Manager',
                 'Add Employee',
-                'Delete Employee',
-                'Update Employee Role',
-                'Update Employee Manager',
-                'View All Roles',
+                'View Employees',
                 'Add Role',
-                'Remove Role',
+                'View Roles',
                 'Add Department',
-                'View All Departments',
-                'Exit'
+                'View Departments',
+                'Update Employee Role',
+                'EXIT'            
             ]
         })
-        .then(function(answer) {
+        .then(answer => {
             switch (answer.action) {
-                case 'View All Employees':
-                    viewAllEmployees();
-                    break;
-                    
-                case 'View All Employees by Department':
-                    viewAllEmployeesByDepartment();
-                    break;
-
-                case 'View All Employees by Manager':
-                    viewAllEmployeesByManager();
-                    break;
-                    
-                case 'Add Employee':
-                    addEmployee();
-                    break;
-
-                case 'Delete Employee':
-                    deleteEmployee();
-                    break;
-                    
-                case 'Update Employee Role':
-                    updateEmployeeRole();
-                    break;
-
-                case 'Update Employee Manager':
-                    updateEmployeeManager();
-                    break;
-                    
-                case 'View All Roles':
-                    viewAllRoles();
-                    break;
-
-                case 'Add Role':
-                    addRole();
-                    break;
-
-                case 'Remove Role':
-                    removeRole();
-                    break;
-
-                case 'Add Department':
-                    addDepartment();
-                    break;
-
-                case 'View All Departments':
-                    viewAllDepartments();
-                    break;
-
-                case 'Exit':
-                    connection.end();
-                    break;                    
+              case 'Add Employee':
+                addEmployee();
+                break;
+              case 'View Employees':
+                viewEmployees();
+                break;
+              case 'Add Role':
+                addRole();
+                break;
+              case 'View Roles':
+                viewRoles();
+                break;
+              case 'Add Department':
+                addDepartment();
+                break;
+              case 'View Departments':
+                viewDepartments();
+                break;
+              case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
+              default:
+                //EXIT
+                connection.end();
             }
-        });
-}
+          });
+      };
 
-const viewAllEmployees = () => {
+const viewEmployees = () => {
     const query = connection.query(
         `SELECT first_name, last_name, title, salary
         FROM employees 
@@ -108,28 +76,6 @@ const viewAllEmployees = () => {
     )
 }
 
-const viewAllEmployeesByDepartment = () => {
-    const query = connection.query(
-        // 'select employee from departments',
-        function(err, res) {
-            if (err) throw err;
-            console.log(res);
-            startApp();
-        }
-    )
-
-}
-
-const viewAllEmployeesByManager = () => {
-    const query = connection.query(
-        // 'select employees that have manager x'
-        function(err, res) {
-            if(err) throw err;
-            console.log(res);
-        }
-    )
-
-}
 
 const addEmployee = () => {
     // Creates a list of roles to be used for inquirer questions
@@ -155,9 +101,8 @@ const addEmployee = () => {
             name: 'lastName'
         },
         {
-            type: 'list',
+            type: 'input',
             message: 'What is the employees role ID?',
-            choices: currentRoles,
             name: 'roleID'
         },
         {
@@ -177,45 +122,10 @@ const addEmployee = () => {
             }
         ), 
         (err, res) => {
-            if (err) throw err;
+            if (err) console.log(err);
         }
         console.log(`\nAdded ${responses.firstName} ${responses.lastName} || Role: ${responses.roleID} || Manager ID: ${responses.managerID}\n`);
         startApp();    
-    })
-}
-
-const deleteEmployee = () => {
-    // Creates a list of employees to be used for inquirer questions
-    // To be used as an employee id for the user
-    let allEmployees = [];
-    connection.query(
-        'select first_name from employees',
-        (err, res) => {
-            if (err) throw err;
-            res.forEach(employee => allEmployees.push(employee.first_name))
-            console.log(allEmployees);
-        }
-    );
-    inquirer.prompt([
-        {
-            type: 'list',
-            message: 'Select employee to delete:',
-            choices: allEmployees,
-            name: 'employeeToDelete'
-        }
-    ])
-    .then( (answers) => {
-        const rowID = employees.indexOf(answers.employeeToDelete);
-        connection.query(
-            // inquirer prompt of all saved users in db
-            'delete from employee where id = ?', [rowID],
-            (err, res) => {
-                if (err) throw err;
-                console.log(`Removed user: ${res.affectedRows}`);
-                startApp();
-            }
-        )
-    
     })
 }
 
@@ -231,19 +141,7 @@ const updateEmployeeRole = () => {
     )
 }
 
-const updateEmployeeManager = () => {
-    const query = connection.query(
-        // inquirer promt of all saved employees in db
-        // update employee set manager_id =
-        function (err, res) {
-            if (err) throw err;
-            console.log(`Updated Employee's Manager`);
-            startApp();
-        }
-    )
-}
-
-const viewAllRoles = () => {
+const viewRoles = () => {
     connection.query(
         'select * from roles',
         (err, res) => {
@@ -289,27 +187,6 @@ const addRole = () => {
     })
 }
 
-const removeRole = () => {
-    // Creates a list of roles to be used for inquirer questions
-    const currentRoles = [];
-    connection.query(
-        'select title from roles',
-        function (err, res) {
-            if (err) throw err;
-            res.forEach(title => currentRoles.push(title.title))
-        }
-    )
-    const query = connection.query(
-        // inquirer prompt of all saved roles in db
-        'select * from roles',
-        function (err, res) {
-            if (err) throw err;
-            console.log(res);
-            startApp();
-        }
-    )
-}
-
 const addDepartment = () => {
     inquirer.prompt([
         {
@@ -333,7 +210,7 @@ const addDepartment = () => {
     })
 }
 
-const viewAllDepartments = () => {
+const viewDepartments = () => {
     connection.query(
         'select * from departments',
         (err, res) => {
