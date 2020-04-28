@@ -137,6 +137,41 @@ const updateEmployeeRole = () => {
       const lastNameEmployee = res[i].last_name;
       employeeListRoles.push(`${firstNameEmployee} ${lastNameEmployee}`);
     }
+    connection.query('select * from roles', (err, res2) => {
+      if (err) throw err;
+      const rolesListUpdate = [];
+      for (let i = 0; i < res2.length; i++) {
+        rolesListUpdate.push(res2[i].title);
+      }
+      inquirer.prompt(
+        [{
+          name: 'employee',
+          message: 'Which empoyee needs their role updated?',
+          type: 'list',
+          choices: employeeListRoles
+        },
+        {
+          name: 'role',
+          message: 'Which role should the employee have now?',
+          type: 'list',
+          choices: rolesListUpdate
+        }])
+        .then(answer => {
+            const nameAdjust = answer.employee.split(' ');
+            const adjustFirstName = nameAdjust[0];
+            const adjustLastName = nameAdjust.join(nameAdjust.shift());
+            connection.query('select id from roles where ?', { title: answer.role }, (err, res) => {
+              if (err) throw err;
+              connection.query('update employees set ?',
+              {role_id: res[0].id, first_name: adjustFirstName, last_name: adjustLastName},
+              (err) => {
+                if (err) throw err;
+                console.log('Employee role successfully updated!');
+                startApp();
+              });
+        });
+        });
+    });
   });
 }
 
