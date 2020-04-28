@@ -1,31 +1,11 @@
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password
-BY 'toor';
+USE companyDB;
 
-drop database if exists companyDB;
+INSERT INTO departments (name)
+VALUES ("Accounting"), ("Service"), ("Sales");
 
-create database companyDB;
+INSERT INTO roles (title, salary, department_id)
+VALUES ("Junior Full-Stack Dev", 50000, 1), 
+("Repair Technician", 35000, 2), ("Regional Sales Representative", 100000, 3);
 
-use companyDB;
-
-create table employees(
-	id int not null auto_increment,
-    primary key (id),
-    first_name varchar(30),
-    last_name varchar(30),
-    role_id int,
-    manager_id int null
-);
-
-create table roles(
-	id int not null auto_increment,
-    primary key (id),
-    title varchar(30),
-    salary decimal(10,2),
-    department_id int
-);
-
-create table departments(
-	id int not null auto_increment,
-    primary key (id),
-    name varchar(50)
-);
+INSERT INTO employees (first_name, last_name, role_id)
+VALUES ("Bill", "Paxton", 1), ("Jill", "Hazel", 3), ("Bill", "Hill", 2);

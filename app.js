@@ -64,7 +64,7 @@ const startApp = () => {
 
 const viewEmployees = () => {
     const query = connection.query(
-        `SELECT first_name, last_name, title, salary
+        `SELECT employees.id, first_name, last_name, role_id, salary
         FROM employees 
         INNER JOIN roles
         ON employees.role_id = roles.id`,
@@ -81,7 +81,7 @@ const addEmployee = () => {
     // Creates a list of roles to be used for inquirer questions
     // Can't figure out how to save the index value of each role
     // To be used as a role id for the user
-    const currentRoles = [];
+    let currentRoles = [];
     connection.query(
         'select title from roles',
         function (err, res) {
@@ -102,18 +102,18 @@ const addEmployee = () => {
         },
         {
             type: 'input',
-            message: 'What is the employees role ID?',
+            message: 'What is the employees role ID ? (required)',
             name: 'roleID'
         },
         {
             type: 'input',
-            message: 'Who is this employee\'s manager?',
+            message: 'Enter managers ID if applicable (required)',
             name: 'managerID',
         }
     ])
     .then( (responses) => {
         connection.query(
-            "INSERT INTO employees SET ?",
+            "insert into employees set ?",
             {
               first_name: responses.firstName,
               last_name: responses.lastName,
@@ -124,21 +124,20 @@ const addEmployee = () => {
         (err, res) => {
             if (err) console.log(err);
         }
-        console.log(`\nAdded ${responses.firstName} ${responses.lastName} || Role: ${responses.roleID} || Manager ID: ${responses.managerID}\n`);
         startApp();    
     })
 }
 
 const updateEmployeeRole = () => {
-    const query = connection.query(
-        // inquirer prompt of all saved users in db
-        // update employee set role = 5 where 
-        function (err, res) {
-            if (err) throw err;
-            console.log(`Updated Employee Role!`);
-            startApp();
-        }
-    )
+  connection.query('select first_name, last_name from employees', (err, res) => {
+    if (err) throw err;
+    const employeeListRoles = [];
+    for (let i = 0; i < res.length; i++) {
+      const firstNameEmployee = res[i].first_name;
+      const lastNameEmployee = res[i].last_name;
+      employeeListRoles.push(`${firstNameEmployee} ${lastNameEmployee}`);
+    }
+  });
 }
 
 const viewRoles = () => {
